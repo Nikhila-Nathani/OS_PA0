@@ -1,0 +1,89 @@
+1)
+
+In XINU's memory has the shared memory of heap, data and text. So each register is stored accordingly, to the diagram
+ ________
+|        |
+|  free  |
+|  mem   |
+|________| [0x00ffeffc] 
+|        |
+|        | 
+| Stack  |
+|________| base[0x00ffeff8] 
+|        |
+|  main  | stack pointer [0x00ffef90] 
+| stack  | stack limit [0x00ffdffc] 
+|________| 
+|        | 
+| heap   |
+|________| ebss[0x00028bb8]
+|        | 
+| BSS    |
+|________| edata[0x0002053d]
+|        | 
+| DATA   |
+|________| etext[0x0001bbbf]
+|        | 
+| TEXT   |
+|________| start[0x00000000]
+|        | 
+
+2) 
+
+Before calling, the printtos() function, the last value in the stack is the return address from the previous functions and calls. The previous function call's esp (old ESP) is the address before that. After the printtos() function is called,EBP points to the stack bottom, where the new function starts executing. So after the series of steps are done, the stack pointer(ESP) which was at the EBP, gets updated to the last pushed addresss.
+
+|        |
+|        |
+|________| [0x00ffefc0] // This is the address before the printtos()- EBP+2
+|        |
+| Return | 
+| Address|
+|________| [0x00ffefbc] // EBP+1
+|        | 
+|  EBP   |
+|________| [0x00ffefb8] // This is the start address after printtos()
+|        | 
+|   d    |
+|________| [0x00ffefb4]
+|        | 
+|   c    |
+|________| [0x00ffefb0]
+|        | 
+|   b    |
+|________| [0x00ffefac]
+|        | 
+|   a    |
+|________| [0x00ffefa8]
+|        | 
+|   |    |
+|   |    | 
+|   |    |
+|   |    | 
+|   V    |
+|        | 
+|        |
+|current | 
+|  ESP   |
+|________| [0x00ffef90]
+|        | 
+
+
+3)
+
+short int one = 0x0001;
+long, unsigned int, int, all have 4 bytes
+
+I could find it from the x86 architecture details, when searched for it particularly, to analyse the address spaces and the registers, used in coding assignment.
+
+ref: https://www.codeproject.com/Articles/4804/Basic-concepts-on-Endianness
+
+4)
+mov - copies the data from the first operand to the second operand from the register location
+push - it places the operand which is 4 byte on to the top of stack
+pusha -it places the operand which is 16 byte on to the top of stack
+pop - it removes or pops out the 4 byte operand from the top of the stack into the particular operand
+popa - it removes or pops out the 16 byte operand from the top of the stack into the particular operand
+
+5)
+
+IN task 3, the result doesn't show all the local variables decalred in the function. It is beacause all those variables are put into the registers, hence they are not visibly displayed. But doing the compiler optimization, would perform force fit, hence it displays all those varibles, with that hack.
